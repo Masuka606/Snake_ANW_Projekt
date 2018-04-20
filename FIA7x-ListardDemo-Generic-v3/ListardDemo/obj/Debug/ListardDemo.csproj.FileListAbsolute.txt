@@ -1,0 +1,6 @@
+C:\Users\A13A3AE\Desktop\Schule\ANW\FIA7x-ListardDemo-Generic-v3\ListardDemo\bin\Debug\ListardDemo.exe
+C:\Users\A13A3AE\Desktop\Schule\ANW\FIA7x-ListardDemo-Generic-v3\ListardDemo\bin\Debug\ListardDemo.pdb
+C:\Users\A13A3AE\Desktop\Schule\ANW\FIA7x-ListardDemo-Generic-v3\ListardDemo\obj\Debug\ListardDemo.csproj.CoreCompileInputs.cache
+C:\Users\A13A3AE\Desktop\Schule\ANW\FIA7x-ListardDemo-Generic-v3\ListardDemo\obj\Debug\ListardDemo.exe
+C:\Users\A13A3AE\Desktop\Schule\ANW\FIA7x-ListardDemo-Generic-v3\ListardDemo\obj\Debug\ListardDemo.pdb
+C:\Users\A13A3AE\Desktop\Schule\ANW\FIA7x-ListardDemo-Generic-v3\ListardDemo\obj\Debug\ListardDemo.csprojResolveAssemblyReference.cache
