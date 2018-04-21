@@ -19,10 +19,10 @@ namespace ConsoleGameDemo
         const int MAX_SPEED = 1;
         const int DELTA_TIME = 200;
         const int INFOSCREEN_TIME = 3000;
-        const int COUNT_ITEMS = 5;
+        const int COUNT_Gems = 5;
         const ConsoleColor backColor = ConsoleColor.Black;
         const ConsoleColor userColor = ConsoleColor.Green;
-        const ConsoleColor itemColor = ConsoleColor.Yellow;
+        const ConsoleColor GemColor = ConsoleColor.Yellow;
         const ConsoleColor textColor = ConsoleColor.Green;
 
 
@@ -65,9 +65,10 @@ namespace ConsoleGameDemo
             {
                 int x = random.Next(DIM_X);
                 int y = random.Next(DIM_Y);
+                char Gem = '*';
 
                 Gems.Add(new Position(x,y));
-
+                ShowSymbol(Gem, Gems[Items].X, Gems[Items].Y, GemColor);
 
             }
         }
@@ -237,7 +238,7 @@ namespace ConsoleGameDemo
 
 
             // Create a bunch of items for the user to collect
-            for (int i = 0; i < COUNT_ITEMS; i++) CreateItem();
+         //   for (int i = 0; i < COUNT_Gems; i++) CreateItems();
 
             //Setup Snakebody
 
@@ -259,12 +260,12 @@ namespace ConsoleGameDemo
             CreateItems();
             while (continueloop == true)
             {
-                
+
                 // Show user symbol
-                ShowText("" + items.Count + " Gegenstände sind noch zu sammeln ", 1, DIM_Y, itemColor);
+                ShowText("" + GetCount() + " Gegenstände sind noch zu sammeln ", 1, DIM_Y, GemColor);
 
 
-                
+
                 // Check whether the user did some input
                 if (Console.KeyAvailable)
                 {
@@ -282,7 +283,7 @@ namespace ConsoleGameDemo
                         {
                             if (speedY < 1)
                             {
-                                 speedY = -1;
+                                speedY = -1;
                                 speedX = 0;
                             }
 
@@ -312,7 +313,7 @@ namespace ConsoleGameDemo
                                 speedY = 0;
                             }
                         }
-                        
+
                     }
                     else
                     {
@@ -327,7 +328,7 @@ namespace ConsoleGameDemo
                     // if (speedyMotion) UserMove(speedX, speedY);
 
                     //Move Snake
-                    
+
                     SnakeMove(speedX, speedY);
                     ShowSnake();
                     // Wait some time
@@ -336,39 +337,48 @@ namespace ConsoleGameDemo
                 }
 
                 // Check whether the user hits an item
-                int itemKey = KeyFromXY(posX, posY);
-                if (items.ContainsKey(itemKey))
+               // int itemKey = KeyFromXY(posX, posY);
+                //if (items.ContainsKey(itemKey))
+                for (int i2 = 0; i2 < GetCount(); ++i2)
                 {
-                    Console.Beep(); // Give some Beep
-                    items.Remove(itemKey);
-
-
-                    if(items.Count == 0)
+                    if (Gems[i2].X == SnakeBody[0].X && Gems[i2].Y == SnakeBody[0].Y)
                     {
+                        Console.Beep(); // Give some Beep
+                                        // items.Remove(itemKey);
+                        Gems.Delete(i2,[1]);
 
-                        continueloop = false;
+                        if (Gems.Count == 0)
+                        {
+
+                            continueloop = false;
+
+                        }
+
+                        //Länger werden
+
+                        SnakeBody.Add(new Position(posX, posY));
 
                     }
-                    
-                    //Länger werden
-
-                    SnakeBody.Add(new Position(posX, posY));
-                    
                 }
 
             }
             // Show final user information
             Console.Clear();
-            ShowText("Gratuliere, Du hast es geschaft ", 1, DIM_Y, itemColor);
+            ShowText("Gratuliere, Du hast es geschaft ", 1, DIM_Y, GemColor);
 
             // Wait user to terminate program using ENTER-key
             Console.ReadLine();
 
         }
 
-            
+        private int GetCount()
+        {
+            return Gems.Count;
+        }
 
-        
+
+
+
 
         /// <summary>
         /// Move the current user to the given position
@@ -410,7 +420,7 @@ namespace ConsoleGameDemo
                 if (!items.ContainsKey(itemKey))
                 {
                     items.Add(itemKey, item);
-                    ShowSymbol(item, x, y, itemColor);
+                    ShowSymbol(item, x, y, GemColor);
                     return; // ready with the new item
                 }
             }
