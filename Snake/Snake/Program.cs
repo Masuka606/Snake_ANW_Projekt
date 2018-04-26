@@ -17,7 +17,7 @@ namespace ConsoleGameDemo
         const int DIM_X = 80;
         const int DIM_Y = 40;
         const int MAX_SPEED = 1;
-        const int DELTA_TIME = 200;
+        const int DELTA_TIME = 70;
         const int INFOSCREEN_TIME = 3000;
         const int COUNT_Gems = 5;
         const ConsoleColor backColor = ConsoleColor.Black;
@@ -57,20 +57,31 @@ namespace ConsoleGameDemo
 
         }
         Listard<Position> SnakeBody = new Listard<Position>();
-        Listard<Position> Gems= new Listard<Position>();
+        Listard<Position> Gems = new Listard<Position>();
 
-        public void CreateItems()
+
+        //public void collisionDetection()
+        //{
+        //    for (int Snakelenght = SnakeBody.Count; Snakelenght > 0; Snakelenght--)
+        //    {
+        //        for (int Gemscount = items.Count; Gemscount >0; Gemscount--)
+        //        {
+        //            if (SnakeBody[Snakelenght - 1] == Gems[Gemscount]) //Nicht Gems sondern Snake
+        //        }
+
+        //    }
+        //}
+
+
+        public void CreateItem()
         {
-            for (int Items = 0; Items < 5; ++Items)
-            {
-                int x = random.Next(DIM_X);
-                int y = random.Next(DIM_Y);
-                char Gem = '*';
 
-                Gems.Add(new Position(x,y));
-                ShowSymbol(Gem, Gems[Items].X, Gems[Items].Y, GemColor);
+            int x = random.Next(DIM_X-1);
+            int y = random.Next(DIM_Y-1);
+            char Gem = '*';
 
-            }
+            Gems.Add(new Position(x, y));
+            ShowSymbol(Gem, Gems[0].X, Gems[0].Y, GemColor);
         }
 
 
@@ -257,7 +268,7 @@ namespace ConsoleGameDemo
             //Obsolete
             //SnakeInit();
 
-            CreateItems();
+            CreateItem();
             while (continueloop == true)
             {
 
@@ -337,29 +348,28 @@ namespace ConsoleGameDemo
                 }
 
                 // Check whether the user hits an item
-               // int itemKey = KeyFromXY(posX, posY);
+                // int itemKey = KeyFromXY(posX, posY);
                 //if (items.ContainsKey(itemKey))
-                for (int i2 = 0; i2 < GetCount(); ++i2)
+
+                if (Gems[0].X == SnakeBody[0].X && Gems[0].Y == SnakeBody[0].Y)
                 {
-                    if (Gems[i2].X == SnakeBody[0].X && Gems[i2].Y == SnakeBody[0].Y)
-                    {
-                        Console.Beep(); // Give some Beep
-                                        // items.Remove(itemKey);
-                        Gems.Delete(i2,[1]);
+                    Console.Beep(); // Give some Beep
+                    //items.Remove(itemKey);
+                    Gems.Delete(0);
 
-                        if (Gems.Count == 0)
-                        {
+                    //if (Gems.Count == 0)
+                    //{
 
-                            continueloop = false;
+                        CreateItem();
 
-                        }
+                    //}
 
-                        //Länger werden
+                    //Länger werden
 
                         SnakeBody.Add(new Position(posX, posY));
 
-                    }
                 }
+
 
             }
             // Show final user information
@@ -404,27 +414,27 @@ namespace ConsoleGameDemo
         /// <summary>
         /// Creates, shows and registers a new item
         /// </summary>
-        public void CreateItem()
-        {
-            while (true)
-            {
-                // Get new random position
-                int x = random.Next(DIM_X);
-                int y = random.Next(DIM_Y);
+        //public void CreateItem()
+        //{
+        //    while (true)
+        //    {
+        //        // Get new random position
+        //        int x = random.Next(DIM_X);
+        //        int y = random.Next(DIM_Y);
 
-                // Get a position code from xy-coordinates
-                int itemKey = KeyFromXY(x, y);
-                char item = '*';
+        //        // Get a position code from xy-coordinates
+        //        int itemKey = KeyFromXY(x, y);
+        //        char item = '*';
 
-                // Try if no item at position already existed
-                if (!items.ContainsKey(itemKey))
-                {
-                    items.Add(itemKey, item);
-                    ShowSymbol(item, x, y, GemColor);
-                    return; // ready with the new item
-                }
-            }
-        }
+        //        // Try if no item at position already existed
+        //        if (!items.ContainsKey(itemKey))
+        //        {
+        //            items.Add(itemKey, item);
+        //            ShowSymbol(item, x, y, GemColor);
+        //            return; // ready with the new item
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Gets a position code from the given xy-coordinates
