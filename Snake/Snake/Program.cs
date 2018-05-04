@@ -1,4 +1,8 @@
-﻿using System;
+﻿//Snake
+//04.05.2018  Created By: Nico Jankowski, Lukas Mrziglod
+
+
+using System;
 using System.Collections.Generic;
 using ListardDemo;
 using System.Threading;
@@ -19,26 +23,26 @@ namespace ConsoleGameDemo
         const int COUNT_Gems = 5;
         const ConsoleColor backColor = ConsoleColor.Black;
         const ConsoleColor userColor = ConsoleColor.Green;
-        const ConsoleColor GemColor = ConsoleColor.Yellow;
+        const ConsoleColor gemColor = ConsoleColor.Yellow;
         const ConsoleColor textColor = ConsoleColor.Green;
+        const ConsoleColor obstacleColor = ConsoleColor.Red;
 
 
-        //int[,] Snake = new int[70, 30];
 
         //Gameloop Variable
         bool continueloop = true;
 
         // User-Cursor with speed
-        int posX = 20;
-        int posY = 20;
-        int speedX = 0;
-        int speedY = -1;
-        char symbol = 'o';
-        char headsymbol = 'Ö';
-        int GameSpeed = 200; //Spielgeschwindigkeit
-        int ItemsCollected; //Gesammelte Items
+        int posX = 20;          //startposition
+        int posY = 20;          //Startposition
+        int speedX = 0;         //richtung auf der X-Achse
+        int speedY = -1;        //richtung auf der Y-Achse
+        char symbol = 'o';      // Snakebody Symbol
+        char headsymbol = 'Ö';  //Snakekopf Symbol
+        int gameSpeed = 200;    //Spielgeschwindigkeit
+        int ItemsCollected;     //Gesammelte Items
+        bool running = true;    //Gibt an, ob das Programm läuft
 
-        // Motion mode: user only motion or animated speedy motion
 
 
         // Create random gernerator
@@ -58,138 +62,313 @@ namespace ConsoleGameDemo
         }
         Listard<Position> SnakeBody = new Listard<Position>();
         Listard<Position> Gems = new Listard<Position>();
+        Listard<Position> Obstacle = new Listard<Position>();
+
+
+
+        //public void Neustarten()
+        //{
+        //    //bool success = false;
+        //    string restartInput = "B";
+
+
+        //    //while (success)
+        //    //{
+        //    try
+        //    {
+        //        Console.Clear();
+        //        ShowText("Möchten Sie das Programm neustarten?", 20, 15, textColor);
+        //        ShowText("(j/n)", 30, 16, textColor);
+
+        //        restartInput = Convert.ToString(Console.ReadKey());
+        //        restartInput.ToLower();
+
+        //        if (restartInput == "j")
+        //        {
+
+        //            running = true;
+
+
+        //        }
+        //        if (restartInput == "n")
+        //        {
+        //            Environment.Exit(0);
+
+
+        //        }
+
+
+
+        //    }
+        //    catch
+        //    {
+
+        //        //success = false;
+        //    }
+
+        //}
 
 
         public int MenuSpeed()
         {
+            //Spielgeschwindigkeit zu beginn einstellen
 
-            Console.WriteLine("Bitte geben sie die gewünschte Schwierigkeitsstufe ein (1-10)");
-            int schwierigkeitsstufe = Convert.ToInt32(Console.ReadLine());
+            bool success = false;
+            int schwierigkeitsstufe = 0;
+
+            while (!success)
+            {
+                try
+                {
+                    Console.WriteLine("Bitte geben sie die gewünschte Schwierigkeitsstufe ein (1-10)");
+                    schwierigkeitsstufe = Convert.ToInt32(Console.ReadLine());
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                }
+            }
+
 
 
 
             switch (schwierigkeitsstufe)
             {
                 case 1:
-                    GameSpeed = 200;
+                    gameSpeed = 200;
                     break;
 
                 case 2:
-                    GameSpeed = 180;
+                    gameSpeed = 180;
                     break;
 
                 case 3:
-                    GameSpeed = 160;
+                    gameSpeed = 160;
                     break;
 
                 case 4:
-                    GameSpeed = 140;
+                    gameSpeed = 140;
                     break;
 
                 case 5:
-                    GameSpeed = 120;
+                    gameSpeed = 120;
                     break;
 
                 case 6:
-                    GameSpeed = 100;
+                    gameSpeed = 100;
                     break;
 
                 case 7:
-                    GameSpeed = 80;
+                    gameSpeed = 80;
                     break;
 
                 case 8:
-                    GameSpeed = 60;
+                    gameSpeed = 60;
                     break;
 
                 case 9:
-                    GameSpeed = 40;
+                    gameSpeed = 40;
                     break;
 
                 case 10:
-                    GameSpeed = 20;
+                    gameSpeed = 20;
                     break;
 
                 default:
-                    
+
                     break;
-                    
+
             }
-            // Setup console
+            // Console Initialisieren
             Console.Title = "Snakerino";
             Console.SetWindowSize(DIM_X, DIM_Y + 1);
             Console.SetBufferSize(DIM_X, DIM_Y + 1);
             Console.BackgroundColor = backColor;
             Console.ForegroundColor = userColor;
             Console.Clear();
-            return GameSpeed;
+            return gameSpeed;
+
+
+
+
         }
 
+        public void LoseScreen()
+        {
+            //Bei Spielende Ausgabe
+            Console.Clear();
+            ShowText("Leider verloren! ", 30, 20, obstacleColor);
+            ShowText("Sie haben " + ItemsCollected + " Punkte erreicht", 25, 22, userColor);
+            //Consolentöne
+            Console.Beep(440, 500);
+            Thread.Sleep(80);
+            Console.Beep(392, 500);
+            Thread.Sleep(80);
+            Console.Beep(349, 500);
+            Thread.Sleep(80);
+            Console.Beep(329, 500);
+            Thread.Sleep(2000);
 
-        public void collisionDetection()
+            Console.Clear();
+
+
+
+
+            // Wait user to terminate program using ENTER-key
+            ShowText("Zum Beenden Drücken Sie ENTER", 25, 20, obstacleColor);
+            Console.ReadLine();
+            Environment.Exit(0);
+        }
+        public void CollisionDetection()
         {
             for (int Snakelenght = SnakeBody.Count; Snakelenght > 2; Snakelenght--)
             {
-                if (SnakeBody[0].X == SnakeBody[Snakelenght-1].X && SnakeBody[0].Y == SnakeBody[Snakelenght-1].Y)
+                if (SnakeBody[0].X == SnakeBody[Snakelenght - 1].X && SnakeBody[0].Y == SnakeBody[Snakelenght - 1].Y)
                 {
-                    // Show final user information
-                    Console.Clear();
-                    ShowText("Leider verloren! ", 1, DIM_Y, GemColor);
-                    Console.Beep(440, 500);
-                    Thread.Sleep(80);
-                    Console.Beep(392, 500);
-                    Thread.Sleep(80);
-                    Console.Beep(349, 500);
-                    Thread.Sleep(80);
-                    Console.Beep(329, 500);
-
-
-
-                    // Wait user to terminate program using ENTER-key
-                    Console.ReadLine();
-
+                    LoseScreen();
                 }
 
             }
-        }
-
-
-        public void CreateItem()
-        {
-            
-            int x = random.Next(1, DIM_X-1);
-            int y = random.Next(1, DIM_Y-1);
-            char Gem = '*';
-
-            Gems.Add(new Position(x, y));
-            ShowSymbol(Gem, Gems[0].X, Gems[0].Y, GemColor);
-        }
-
-
-
-
-    public void SnakeMove(int speedX, int speedY)
-        {
-
-
-
-            //Move Body
-            for (int Snakelenght = SnakeBody.Count; Snakelenght > 1; Snakelenght--)
+            for (int Obstaclelenght = Obstacle.Count; Obstaclelenght > 0; Obstaclelenght--)
             {
-                SnakeBody[Snakelenght - 1] = SnakeBody[Snakelenght - 2];
-                
-                //set Snakeposition to previous Snakebody element
+                if (SnakeBody[0].X == Obstacle[Obstaclelenght - 1].X && SnakeBody[0].Y == Obstacle[Obstaclelenght - 1].Y)
+                {
+                    LoseScreen();
+                }
+            }
 
+
+        }
+        public void CreateSnake()
+        {
+            //Snake an zufälliger Position erstellen
+
+            int Xp = random.Next(5, DIM_X - 5);
+            int Yp = random.Next(5, DIM_Y - 5);
+            for (int Snakelenght = 0; Snakelenght < 5; ++Snakelenght)
+            {
+
+                Yp = Yp + Snakelenght;
+                SnakeBody.Add(new Position(Xp, Yp));
+
+            }
+        }
+
+        public void CreateGems()
+        {
+            //Sterne erstellen
+
+            int x = random.Next(1, DIM_X - 1);
+            int y = random.Next(1, DIM_Y - 1);
+            char Gem = '*';
+            //Sternposition in Listard übernehmen (Erweiterbar auf mehrere Sterne)
+            Gems.Add(new Position(x, y));
+            ShowSymbol(Gem, Gems[0].X, Gems[0].Y, gemColor);
+        }
+
+        public void CreateObstacle()
+        {
+            for (int i = 0; i < 25; i++)
+            {
+                int x = random.Next(1, DIM_X - 1);
+                int y = random.Next(1, DIM_Y - 1);
+                char Obstaclesymbol = '#';
+                //Sternposition in Listard übernehmen (Erweiterbar auf mehrere Sterne)
+                Obstacle.Add(new Position(x, y));
+                ShowSymbol(Obstaclesymbol, Obstacle[i].X, Obstacle[i].Y, obstacleColor);
+            }
+
+            //Kein Obstacle erstellen, wenn es mit den Items oder dem Snakekopf Kollidiert
+            for (int Obstaclelenght = Obstacle.Count; Obstaclelenght > 0; Obstaclelenght--)
+            {
+                if (SnakeBody[0].X == Obstacle[Obstaclelenght - 1].X && SnakeBody[0].Y == Obstacle[Obstaclelenght - 1].Y || Gems[0].X == Obstacle[Obstaclelenght - 1].X && Gems[0].Y == Obstacle[Obstaclelenght - 1].Y)
+                {
+                    Obstacle.Delete(Obstaclelenght - 1);
+                }
+            }
+
+
+        }
+
+        public void SnakeControl()
+        {
+            // Check whether the user did some input
+            if (Console.KeyAvailable)
+            {
+                // User input - react to the users input
+
+                ConsoleKeyInfo cki = Console.ReadKey();
+                // Fetch first char of logical key name and set user symbol
+                string keyName = cki.Key.ToString();
+
+                // Richtungsänderung
+                if (cki.Key == ConsoleKey.UpArrow)
+                {
+                    if (speedY < 1)
+                    {
+                        speedY = -1;
+                        speedX = 0;
+                    }
+                }
+                else if (cki.Key == ConsoleKey.DownArrow)
+                {
+                    if (speedY > -1)
+                    {
+                        speedY = 1;
+                        speedX = 0;
+                    }
+                }
+                else if (cki.Key == ConsoleKey.LeftArrow)
+                {
+                    if (speedX < 1)
+                    {
+                        speedX = -1;
+                        speedY = 0;
+                    }
+                }
+                else if (cki.Key == ConsoleKey.RightArrow)
+                {
+                    if (speedX > -1)
+                    {
+                        speedX = 1;
+                        speedY = 0;
+                    }
+                }
 
 
             }
+            else
+            {
+                // No user input - the gaming loop does a time step
 
-            //Move Head
+                //Move Snake
+                SnakeMove(speedX, speedY);
+
+                DrawSnake();
+                // Wait some time
+                System.Threading.Thread.Sleep(gameSpeed);
+                DeleteSnake();
+            }
+
+        }
+        public void SnakeMove(int speedX, int speedY)
+        {
+
+            //Snake Körper bewegen
+            for (int Snakelenght = SnakeBody.Count; Snakelenght > 1; Snakelenght--)
+            {
+                SnakeBody[Snakelenght - 1] = SnakeBody[Snakelenght - 2];
+
+            }
+
+            //Snake Kopf bewegen
             Position newHeadPos = new Position(SnakeBody.Get(0).X, SnakeBody.Get(0).Y);
 
             newHeadPos.X = (newHeadPos.X + speedX) % DIM_X;
             newHeadPos.Y = (newHeadPos.Y + speedY) % DIM_Y;
 
+            //Position an Spielfeld anpassen
             if (newHeadPos.Y < 0)
                 newHeadPos.Y += newHeadPos.Y + DIM_Y;
 
@@ -198,7 +377,7 @@ namespace ConsoleGameDemo
 
             SnakeBody.Set(newHeadPos, 0);
 
-            collisionDetection();
+            CollisionDetection();
 
 
 
@@ -206,8 +385,8 @@ namespace ConsoleGameDemo
 
         public void DrawSnake()
         {
-            //Draw Snake
-            for(int Snakelenght = SnakeBody.Count; Snakelenght > 1; Snakelenght--)
+            //Snakeelemente anzeigen
+            for (int Snakelenght = SnakeBody.Count; Snakelenght > 1; Snakelenght--)
             {
                 ShowSymbol(symbol, SnakeBody[Snakelenght - 1].X, SnakeBody[Snakelenght - 1].Y, userColor);
 
@@ -216,7 +395,7 @@ namespace ConsoleGameDemo
         }
         public void DeleteSnake()
         {
-            //Delete 
+            //Snakebewegung korrigieren
             //Index of last Position
             int Snakelastpos = SnakeBody.Count - 1;
             ShowSymbol(symbol, SnakeBody[Snakelastpos].X, SnakeBody[Snakelastpos].Y, backColor);
@@ -226,19 +405,22 @@ namespace ConsoleGameDemo
 
         public void GameRun()
         {
-
-
-            MenuSpeed();
-
-            //ASCII ART
-            Console.WriteLine("\n\n");
-            var arr = new[]
+            if (running)
             {
+
+                Console.Clear();
+
+                MenuSpeed();
+
+                //ASCII ART
+                Console.WriteLine("\n\n");
+                var arr = new[]
+                {
             @"                                             88                   ",
             @"                                             88                   ",
             @"                                             88                   ",
             @"            ,adPPYba, 8b,dPPYba,  ,adPPYYba, 88   ,d8  ,adPPYba,  ",
-            @"            I8[    "" 88P'   ``8a ""       `Y8 88 ,a8`  a8P_____88  ",
+            @"            I8[    ""  88P'   ``8a ""      `Y8 88 ,a8`  a8P_____88  ",
             @"             ``Y8ba,  88       88 ,adPPPPP88 8888    [8PP```````  ",
             @"            aa    ]8I 88       88 88,    ,88 88``Yba, `8b,   ,aa  ",
             @"            ``YbbdP`' 88       88 `´8bbdP´Y8 88   `Y8a `´Ybbd8´'  ",
@@ -246,144 +428,65 @@ namespace ConsoleGameDemo
             };
 
 
-            //ASCII ART PRINT
-            foreach (string line in arr)
-                Console.WriteLine(line);
+                //ASCII ART ausgeben
+                foreach (string line in arr)
+                    Console.WriteLine(line);
 
-
-            ShowText("Nutze die Pfeiltasten zum Navigieren    ", 20, 15, textColor);
-            // Wait some time
-            System.Threading.Thread.Sleep(INFOSCREEN_TIME);
-            Console.Clear();
-
-
-
-
-            //Setup Snakebody
-
-            for (int Snakelenght = 0; Snakelenght < 5; ++Snakelenght)
-            {
-                int Xp = 5;
-                int Yp = 10 + Snakelenght;
-                SnakeBody.Add(new Position(Xp, Yp));
-
-            }
+                //Gameinfo
+                ShowText("Nutze die Pfeiltasten zum Navigieren    ", 22, 15, textColor);
+                ShowText("Sammeln Sie die Sterne und weichen Sie den Hindenissen aus", 12, 17, textColor);
+                // Warten, um Steuerung zu erklären
+                System.Threading.Thread.Sleep(INFOSCREEN_TIME);
+                Console.Clear();
 
 
 
+                //Spielfeld aufbauen
 
+                //Snake erstellen
+                CreateSnake();
+                //Sterne erstellen
+                CreateGems();
+                //Hindernisse erstellen
+                CreateObstacle();
 
-
-            CreateItem();
-            while (continueloop == true)
-            {
-                // Show user symbol
-                if ( ItemsCollected == 1)
+                //Spielschleife
+                while (continueloop == true)
                 {
-                    ShowText("" + ItemsCollected + " Stern gesammelt ", 1, DIM_Y, GemColor);
-                }
-                else ShowText("" + ItemsCollected + " Sterne gesammelt ", 1, DIM_Y, GemColor);
+                    // Show user symbol
+                    if (ItemsCollected == 1)
+                    {
+                        ShowText("" + ItemsCollected + " Stern gesammelt ", 1, DIM_Y, gemColor);
+                    }
+                    else ShowText("" + ItemsCollected + " Sterne gesammelt ", 1, DIM_Y, gemColor);
+
+                    SnakeControl();
+
+                    // Check whether the user hits an item
 
 
+                    if (Gems[0].X == SnakeBody[0].X && Gems[0].Y == SnakeBody[0].Y)
+                    {
+                        ItemsCollected++;
+                        Console.Beep(1108, 70);
 
-                // Check whether the user did some input
-                if (Console.KeyAvailable)
-                {
-                    // User input - react to the users input
-
-                    ConsoleKeyInfo cki = Console.ReadKey();
-                    // Fetch first char of logical key name and set user symbol
-                    string keyName = cki.Key.ToString();
-
-                        // User manipulates the speed parameters
-                        if (cki.Key == ConsoleKey.UpArrow)
-                        {
-                            if (speedY < 1)
-                            {
-                                speedY = -1;
-                                speedX = 0;
-                            }
-
-                        }
-                        
-                        else if (cki.Key == ConsoleKey.DownArrow)
-                        {
-                            if (speedY > -1)
-                            {
-                                speedY = 1;
-                                speedX = 0;
-                            }
-                        }
-                        else if (cki.Key == ConsoleKey.LeftArrow)
-                        {
-                            if (speedX < 1)
-                            {
-                                speedX = -1;
-                                speedY = 0;
-                            }
-                        }
-                        else if (cki.Key == ConsoleKey.RightArrow)
-                        {
-                            if (speedX > -1)
-                            {
-                                speedX = 1;
-                                speedY = 0;
-                            }
-                        }
-
-
-                }
-                else
-                {
-                    // No user input - the gaming loop does a time step
-
-                    //Move Snake
-
-                    SnakeMove(speedX, speedY);
-
-                    DrawSnake();
-                    // Wait some time
-                    System.Threading.Thread.Sleep(GameSpeed);
-                    DeleteSnake();
-                }
-
-                // Check whether the user hits an item
-
-
-                if (Gems[0].X == SnakeBody[0].X && Gems[0].Y == SnakeBody[0].Y)
-                {
-                    ItemsCollected++;
-                    Console.Beep(1108, 70);
-                    
-
-                    //items.Remove(itemKey);
-                    Gems.Delete(0);
-
-
-                    CreateItem();
-
-
-                    //Länger werden
+                        Gems.Delete(0);
+                        CreateGems();
+                        //Länger werden
 
                         SnakeBody.Add(new Position(posX, posY));
 
+                    }
+
+
                 }
-
-                
             }
-            
-
-            // Show final user information
-            Console.Clear();
-            ShowText("Gratuliere, Du hast es geschaft ", 1, DIM_Y, GemColor);
-
-            // Wait user to terminate program using ENTER-key
-            Console.ReadLine();
 
         }
 
         private int GetCount()
         {
+            //Anzahl der gesammelten Items zählen
             return Gems.Count;
         }
 
