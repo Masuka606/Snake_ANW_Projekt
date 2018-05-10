@@ -263,18 +263,22 @@ namespace ConsoleGameDemo
             int x = random.Next(1, DIM_X - 1);
             int y = random.Next(1, DIM_Y - 1);
             char Gem = '*';
-            //Sternposition in Listard übernehmen (Erweiterbar auf mehrere Sterne)
-            Gems.Add(new Position(x, y));
+
+
+            // Falls ein Stern ein Hinderniss überschreibt
+
             for (int Obstaclelenght = Obstacle.Count; Obstaclelenght > 0; Obstaclelenght--)
             {
-                if (Gems[0].X == Obstacle[Obstaclelenght-1].X && Gems[0].Y == Obstacle[Obstaclelenght-1].Y )
+                if ( x == Obstacle[Obstaclelenght - 1].X && y == Obstacle[Obstaclelenght - 1].Y)
                 {
-                    Gems.Delete(0);
-                  //  int x = random.Next(1, DIM_X - 1);
-                   // int y = random.Next(1, DIM_Y - 1);
-                    Gems.Add(new Position(x, y));
+                    x = random.Next(1, DIM_X - 1);
+                    y = random.Next(1, DIM_Y - 1);
                 }
             }
+
+            //Sternposition in Listard übernehmen (Erweiterbar auf mehrere Sterne)
+            Gems.Add(new Position(x, y));
+           
             
             ShowSymbol(Gem, Gems[0].X, Gems[0].Y, gemColor);
         }
