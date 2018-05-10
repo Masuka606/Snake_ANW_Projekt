@@ -42,7 +42,9 @@ namespace ConsoleGameDemo
         int gameSpeed = 200;    //Spielgeschwindigkeit
         int ItemsCollected;     //Gesammelte Items
         bool running = true;    //Gibt an, ob das Programm läuft
-        bool snakemoved = true;
+        bool snakemoved = true; //Variable, die verhindert, dass mehrere Richtungswechsel innerhalb eines Spielschrittes stattfinden können
+        int PunkteMultiplikator = 0; //Punkte Multiplikator, abhängig von Schwierigkeitstufe
+        int punkte = 0;
 
 
         // Create random gernerator
@@ -137,42 +139,52 @@ namespace ConsoleGameDemo
             switch (schwierigkeitsstufe)
             {
                 case 1:
+                    PunkteMultiplikator = 1;
                     gameSpeed = 200;
                     break;
 
                 case 2:
+                    PunkteMultiplikator = 2;
                     gameSpeed = 180;
                     break;
 
                 case 3:
+                    PunkteMultiplikator = 3;
                     gameSpeed = 160;
                     break;
 
                 case 4:
+                    PunkteMultiplikator = 4;
                     gameSpeed = 140;
                     break;
 
                 case 5:
+                    PunkteMultiplikator = 5;
                     gameSpeed = 120;
                     break;
 
                 case 6:
+                    PunkteMultiplikator = 6;
                     gameSpeed = 100;
                     break;
 
                 case 7:
+                    PunkteMultiplikator = 7;
                     gameSpeed = 80;
                     break;
 
                 case 8:
+                    PunkteMultiplikator = 8;
                     gameSpeed = 60;
                     break;
 
                 case 9:
+                    PunkteMultiplikator = 9;
                     gameSpeed = 40;
                     break;
 
                 case 10:
+                    PunkteMultiplikator = 10;
                     gameSpeed = 20;
                     break;
 
@@ -200,7 +212,7 @@ namespace ConsoleGameDemo
             //Bei Spielende Ausgabe
             Console.Clear();
             ShowText("Leider verloren! ", 30, 20, obstacleColor);
-            ShowText("Sie haben " + ItemsCollected + " Punkte erreicht", 25, 22, userColor);
+            ShowText("Sie haben " + punkte + " Punkte erreicht", 25, 22, userColor);
             //Consolentöne
             Console.Beep(440, 500);
             Thread.Sleep(80);
@@ -475,12 +487,12 @@ namespace ConsoleGameDemo
                 while (continueloop == true)
                 {
                     // Show user symbol
-                    if (ItemsCollected == 1)
+                    if (punkte == 1)
                     {
 
-                        ShowText("" + ItemsCollected + " Stern gesammelt ", 1, DIM_Y, gemColor);
+                        ShowText("" + punkte + " Punkt erreicht ", 1, DIM_Y, gemColor);
                     }
-                    else ShowText("" + ItemsCollected + " Sterne gesammelt ", 1, DIM_Y, gemColor);
+                    else ShowText("" + punkte + " Punkte erreicht ", 1, DIM_Y, gemColor);
 
                     
                     
@@ -492,6 +504,7 @@ namespace ConsoleGameDemo
                     if (Gems[0].X == SnakeBody[0].X && Gems[0].Y == SnakeBody[0].Y)
                     {
                         ItemsCollected++;
+                        punkte = ItemsCollected * PunkteMultiplikator;
                         Console.Beep(1108, 70);
 
                         Gems.Delete(0);
