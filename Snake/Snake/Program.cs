@@ -42,7 +42,7 @@ namespace ConsoleGameDemo
         int gameSpeed = 200;    //Spielgeschwindigkeit
         int ItemsCollected;     //Gesammelte Items
         bool running = true;    //Gibt an, ob das Programm läuft
-
+        bool snakemoved = true;
 
 
         // Create random gernerator
@@ -56,6 +56,7 @@ namespace ConsoleGameDemo
         /// </summary>
         static void Main(string[] args)
         {
+
             ConsoleGame game = new ConsoleGame();
             game.GameRun();
 
@@ -70,7 +71,7 @@ namespace ConsoleGameDemo
         //{
         //    //bool success = false;
         //    string restartInput = "B";
-
+        
 
         //    //while (success)
         //    //{
@@ -264,6 +265,17 @@ namespace ConsoleGameDemo
             char Gem = '*';
             //Sternposition in Listard übernehmen (Erweiterbar auf mehrere Sterne)
             Gems.Add(new Position(x, y));
+            for (int Obstaclelenght = Obstacle.Count; Obstaclelenght > 0; Obstaclelenght--)
+            {
+                if (Gems[0].X == Obstacle[Obstaclelenght-1].X && Gems[0].Y == Obstacle[Obstaclelenght-1].Y )
+                {
+                    Gems.Delete(0);
+                  //  int x = random.Next(1, DIM_X - 1);
+                   // int y = random.Next(1, DIM_Y - 1);
+                    Gems.Add(new Position(x, y));
+                }
+            }
+            
             ShowSymbol(Gem, Gems[0].X, Gems[0].Y, gemColor);
         }
 
@@ -293,8 +305,9 @@ namespace ConsoleGameDemo
 
         public void SnakeControl()
         {
+            
             // Check whether the user did some input
-            if (Console.KeyAvailable)
+            if (Console.KeyAvailable && snakemoved == true )
             {
                 // User input - react to the users input
 
@@ -310,6 +323,7 @@ namespace ConsoleGameDemo
                         speedY = -1;
                         speedX = 0;
                     }
+                    snakemoved = false;
                 }
                 else if (cki.Key == ConsoleKey.DownArrow)
                 {
@@ -318,6 +332,7 @@ namespace ConsoleGameDemo
                         speedY = 1;
                         speedX = 0;
                     }
+                    snakemoved = false;
                 }
                 else if (cki.Key == ConsoleKey.LeftArrow)
                 {
@@ -326,6 +341,7 @@ namespace ConsoleGameDemo
                         speedX = -1;
                         speedY = 0;
                     }
+                    snakemoved = false;
                 }
                 else if (cki.Key == ConsoleKey.RightArrow)
                 {
@@ -334,6 +350,7 @@ namespace ConsoleGameDemo
                         speedX = 1;
                         speedY = 0;
                     }
+                    snakemoved = false;
                 }
 
 
@@ -344,7 +361,7 @@ namespace ConsoleGameDemo
 
                 //Move Snake
                 SnakeMove(speedX, speedY);
-
+                snakemoved = true;
                 DrawSnake();
                 // Wait some time
                 System.Threading.Thread.Sleep(gameSpeed);
@@ -456,10 +473,13 @@ namespace ConsoleGameDemo
                     // Show user symbol
                     if (ItemsCollected == 1)
                     {
+
                         ShowText("" + ItemsCollected + " Stern gesammelt ", 1, DIM_Y, gemColor);
                     }
                     else ShowText("" + ItemsCollected + " Sterne gesammelt ", 1, DIM_Y, gemColor);
 
+                    
+                    
                     SnakeControl();
 
                     // Check whether the user hits an item
