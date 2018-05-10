@@ -223,6 +223,9 @@ namespace ConsoleGameDemo
             Console.Beep(329, 500);
             Thread.Sleep(2000);
 
+            Highscore();
+
+
             Console.Clear();
 
 
@@ -233,6 +236,21 @@ namespace ConsoleGameDemo
             Console.ReadLine();
             Environment.Exit(0);
         }
+
+
+        public void Highscore()
+        {
+            //Mit dem Streamreader die Highscore csv lesen
+            //die Highscores vergleichen 
+            //maximale anzahl an zeilen zu lassen
+            //wenn der neue score höher ist als einer der highscores diese zeile überschreiben
+            //dazu den Inhalt der CSV in einzelne Zeilen aufsplitten (1-10)
+            //die einzelnen Felder Position, Name, Score in Array laden
+            //Array Position [2] mit aktuellem Score vergleichen
+            //
+        }
+
+
         public void CollisionDetection()
         {
             for (int Snakelenght = SnakeBody.Count; Snakelenght > 2; Snakelenght--)
@@ -302,7 +320,7 @@ namespace ConsoleGameDemo
                 int x = random.Next(1, DIM_X - 1);
                 int y = random.Next(1, DIM_Y - 1);
                 char Obstaclesymbol = '#';
-                //Sternposition in Listard übernehmen (Erweiterbar auf mehrere Sterne)
+                //Obstaclepositionen in Listard übernehmen (Erweiterbar auf mehrere Sterne)
                 Obstacle.Add(new Position(x, y));
                 ShowSymbol(Obstaclesymbol, Obstacle[i].X, Obstacle[i].Y, obstacleColor);
             }
