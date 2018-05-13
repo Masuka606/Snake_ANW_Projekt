@@ -250,7 +250,7 @@ namespace ConsoleGameDemo
 
 
             //Snake.Highscore[] highscore = new Snake.Highscore[maxZahl];
-            path = @"C:\Users\soad_\Documents\Highscore.csv";// Directory.GetCurrentDirectory() + @"\Highscores5.csv";
+            path =  Directory.GetCurrentDirectory() + @"\Highscores.csv";
             
 
             //while (!File.Exists(path))
