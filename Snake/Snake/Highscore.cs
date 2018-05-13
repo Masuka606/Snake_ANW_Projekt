@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+
 namespace Snake
 {
     class Highscore
@@ -24,33 +25,36 @@ namespace Snake
         //Erstmal mit einem Highscore anfangen dann auf z.B. 10 erweitern
         public bool CreateHighscoreFile(StreamWriter writer)
         {
-            //string path = Directory.GetCurrentDirectory();
+            //Highscore[] highscore = new Highscore();
+            
+            Position = "1";
+            Name = "default";
+            Score = "0";
 
-            //if (File.Exists(path+"Highscore.csv" )
-            //    {
-            //    // do something
-            //    // streamwriter.Readfile
-
-            //     }
-            //    else
-            //    {
-            //    //do something else
-            //    //streamwriter.writefile
-            //    //mit default highscore position =1; Name "";score "0";
-            //    //StreamWriter = new StreamWriter("Highscore.csv", false, new UTF8Encoding(true));
-            //    // hier keine abfrage ob highscore.csv existiert sondern in der highscore methode, hier nur einschreiben von default oder neuem higscore implementieren
-
-
-            //    }
-
-            this.Position = "1";
-            this.Name = "";
-            this.Score = "0";
-            writer.Write(this.Position + ";");
-            writer.Write(this.Name + ";");
-            writer.Write(this.Score + "\r\n");
+            writer.Write(Position + ";");
+            writer.Write(Name + ";");
+            writer.Write(Score + "\r\n");
             return true;
 
+        }
+        public bool Erfassen()
+        {
+            string position = TextEinlesen(" * Position");
+            if (position.Trim() == "")
+            {
+                // end of input
+                this.Position = null;
+                this.Name = null;
+                this.Score = null;
+                return false;
+            }
+            else
+            {
+                this.Position = Position;
+                this.Name = TextEinlesen(" * Name");
+                this.Score = TextEinlesen(" * Score");
+                return true;
+            }
         }
 
         public static Highscore Laden(StreamReader reader)
@@ -63,6 +67,9 @@ namespace Snake
             highscore.Score = werte[2];
             return highscore;
         }
+
+      
+
         public bool Speichern(StreamWriter writer)
         {
             writer.Write(this.Position + ";");
@@ -73,11 +80,16 @@ namespace Snake
 
         public void Anzeigen()
         {
-            Console.WriteLine(" - Position    : " + this.Position);
-            Console.WriteLine(" - Nachname   : " + this.Name);
-            Console.WriteLine(" - Score : " + this.Score);
+            Console.WriteLine(" - Position    : " + this.Position + " - Name   : " + this.Name + " - Score : " + this.Score);
             Console.WriteLine();
+            Console.WriteLine("Weiter mit Enter");
+            Console.ReadLine();
         }
 
+        private static string TextEinlesen(string prompt)
+        {
+            Console.Write(prompt + " : ");
+            return Console.ReadLine();
+        }
     }
 }

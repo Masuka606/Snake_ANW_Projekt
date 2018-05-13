@@ -244,23 +244,90 @@ namespace ConsoleGameDemo
         public void Rangliste()
         {
 
-            const int maxZahl = 1;
+            const int maxZahl = 10;
             int anzahl = 0;
 
-            Snake.Highscore[] highscore = new Snake.Highscore[maxZahl];
-            path = Directory.GetCurrentDirectory();
-            if (File.Exists(path + "/Highscore.csv"))
-            {
-               // ShowText("Datei existiert", 25, 20, obstacleColor);
-               //hier die CSV laden und die Scores vergleichen
 
-                Thread.Sleep(2000);
-            }
-            else
-            {
-                ShowText("Datei existiert nicht", 25, 20, obstacleColor);
-                Thread.Sleep(2000);
 
+            //Snake.Highscore[] highscore = new Snake.Highscore[maxZahl];
+            path = @"C:\Users\soad_\Documents\Highscore.csv";// Directory.GetCurrentDirectory() + @"\Highscores5.csv";
+            
+
+            //while (!File.Exists(path))
+            {
+                if (!File.Exists(path))
+                {
+                    ShowText("Datei existiert nicht", 25, 20, obstacleColor);
+                    Snake.Highscore[] highscores = new Snake.Highscore[maxZahl];
+                    StreamWriter writer = new StreamWriter(path, false, new UTF8Encoding(true));
+
+
+                    Snake.Highscore highscore = new Snake.Highscore();
+                    highscores[0] = highscore;
+                    highscores[0].CreateHighscoreFile(writer);
+                    
+                    writer.Close();
+                    Console.WriteLine("Default Datei erstellt");
+                    Thread.Sleep(2000);
+                }
+                else
+                { 
+                    
+                    // ShowText("Datei existiert", 25, 20, obstacleColor);
+                    //hier die CSV laden und die Scores vergleichen
+                    StreamReader reader = new StreamReader(path, Encoding.UTF8);
+                    Snake.Highscore[] highscores = new Snake.Highscore[maxZahl];
+                      while (!reader.EndOfStream)
+                    {
+                        
+                        // Console.WriteLine("\r\n\t"+reader.ReadLine());
+                        // if (anzahl >= maxZahl) break;
+                        highscores[anzahl++] = Snake.Highscore.Laden(reader);
+                    }
+                    
+
+                    if (Int32.Parse(highscores[0].Score) <= punkte)
+                    {
+                        Console.WriteLine("Herzlichen Glückwunsch");
+                        Console.WriteLine("Neuen Highscore Eingeben");
+                        
+                        while (anzahl < maxZahl)
+                        {
+                            Snake.Highscore highscore = new Snake.Highscore();
+                            if (!highscore.Erfassen()) break;
+                        highscores[anzahl++] = highscore;
+                        }
+                        reader.Close();
+                        
+                        StreamWriter writer = new StreamWriter(path, false, new UTF8Encoding(true));
+                        highscores[1].Speichern(writer);
+                        writer.Close();
+                        anzahl = 0;
+                        highscores = new Snake.Highscore[maxZahl];
+                        
+
+                    }
+
+
+                    StreamReader reader2 = new StreamReader(path, Encoding.UTF8);
+                   // Snake.Highscore[] highscores = new Snake.Highscore[maxZahl];
+                    while (!reader2.EndOfStream)
+                    {
+
+                        // Console.WriteLine("\r\n\t"+reader.ReadLine());
+                        // if (anzahl >= maxZahl) break;
+                        highscores[anzahl++] = Snake.Highscore.Laden(reader2);
+                    }
+
+                    Console.WriteLine("\r\n\tHighscore anzeigen");
+                    for (int i = 0; i < anzahl; i++)
+                    {
+                        highscores[i].Anzeigen();
+                    }
+                    reader.Close();
+
+                    Thread.Sleep(2000);
+                }
             }
 
             //Mit dem Streamreader die Highscore csv lesen
