@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using ListardDemo;
 using System.Threading;
+using System.IO;
+using System.Text;
 
 namespace ConsoleGameDemo
 {
@@ -45,6 +47,7 @@ namespace ConsoleGameDemo
         bool snakemoved = true; //Variable, die verhindert, dass mehrere Richtungswechsel innerhalb eines Spielschrittes stattfinden können
         int PunkteMultiplikator = 0; //Punkte Multiplikator, abhängig von Schwierigkeitstufe
         int punkte = 0;
+        string path = "";
 
 
         // Create random gernerator
@@ -223,7 +226,7 @@ namespace ConsoleGameDemo
             Console.Beep(329, 500);
             Thread.Sleep(2000);
 
-            Highscore();
+            Rangliste();
 
 
             Console.Clear();
@@ -238,8 +241,28 @@ namespace ConsoleGameDemo
         }
 
 
-        public void Highscore()
+        public void Rangliste()
         {
+
+            const int maxZahl = 1;
+            int anzahl = 0;
+
+            Snake.Highscore[] highscore = new Snake.Highscore[maxZahl];
+            path = Directory.GetCurrentDirectory();
+            if (File.Exists(path + "/Highscore.csv"))
+            {
+               // ShowText("Datei existiert", 25, 20, obstacleColor);
+               //hier die CSV laden und die Scores vergleichen
+
+                Thread.Sleep(2000);
+            }
+            else
+            {
+                ShowText("Datei existiert nicht", 25, 20, obstacleColor);
+                Thread.Sleep(2000);
+
+            }
+
             //Mit dem Streamreader die Highscore csv lesen
             //die Highscores vergleichen 
             //maximale anzahl an zeilen zu lassen
